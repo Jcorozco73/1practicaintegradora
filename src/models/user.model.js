@@ -5,7 +5,8 @@ const userCollection = "usuarios";
 const userSchema = new mongoose.Schema({
     nombre: { type: String, required: true, max: 100 },
     apellido: { type: String, required: true, max: 100 },
-    email: { type: String, required: true, max: 100 }
+    email: { type: String, required: true, max: 100 },
+    id: {type: Number, required: true, max: 100}
 });
 
 const userModel = mongoose.model(userCollection, userSchema);

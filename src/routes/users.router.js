@@ -1,10 +1,10 @@
-const { Router } = require('express'); //Importamos el método Router de express
-//Importamos el modelo
-const userModel = require('../models/user.model')
+const { Router } = require('express');
+
+const { userModel } = require('../models/user.model')
 
 const router = Router();
 
-router.get('/', async (req, res) => { //Funcion asíncrona para trabajar con Mongoose
+router.get('/', async (req, res) => { 
     try {
         let users = await userModel.find();
         res.send({ result: "success", payload: users });
@@ -16,7 +16,7 @@ router.get('/', async (req, res) => { //Funcion asíncrona para trabajar con Mon
 router.post('/', async (req, res) => {
     let { nombre, apellido, email } = req.body;
 
-    if (!nombre || !apellido || !email) {
+    if (!nombre || !apellido || !email  ) {
         res.send({ status: "error", error: "Missing body params" });
     }
 
