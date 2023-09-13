@@ -9,38 +9,67 @@ router.get('/', async (req, res) => {
         let users = await userModel.find();
         res.send({ result: "success", payload: users });
     } catch (error) {
-        console.log(error);
+        console.log('error en el usuario', error);
     }
 });
 
+router.get('/:uid', async(req, res) => {
+    try {
+        let paramId = req.params
+        let searchById = await userModel.find({ id: paramId.uid })
+        res.send({ payload: searchById })
+    
+    } catch (error) {
+        console.error(error)
+    }
+
+})
 router.post('/', async (req, res) => {
-    let { nombre, apellido, email } = req.body;
+    try {
+        let { nombre, apellido, email, id } = req.body;
+        
+        let result = await userModel.create({ nombre, apellido, email, id });
+        
+        res.send({ result: "success", payload: result });
 
-    if (!nombre || !apellido || !email  ) {
-        res.send({ status: "error", error: "Missing body params" });
+    } catch (error) {
+        
+        console.log ( "error on user", error );
+
     }
+    
+})
+ 
 
-    let result = await userModel.create({ nombre, apellido, email });
-    res.send({ result: "success", payload: result });
-});
 
 router.put('/:uid', async (req, res) => {
-    let { uid } = req.params;
+    try {
+        let paramId = req.params
+        const findDocument = await userModel.findOne({ id: paramId.uid })
 
-    let userToReplace = req.body;
-    if (!userToReplace.nombre || !userToReplace.apellido || !userToReplace.email) {
-        res.send({ status: "error", error: "Missing body params" });
+        if (findDocument === null) {
+            return res.send("user's ID not found")
+        }
+
+        let newUserInfo = req.body
+        let update = await findDocument.updateOne(newUserInfo)
+
+        res.send({ result: "success on updating", payload: update })
+    } catch (error) {
+        console.log ("Error in PUT /users/:id ", error )
     }
-    let result = await userModel.updateOne({ _id: uid }, userToReplace);
-    res.send({ result: "success", payload: result });
-});
-
+    })
 
 router.delete('/:uid', async (req, res) => {
-    let { uid } = req.params;
-    let result = await userModel.deleteOne({ _id: uid });
-    res.send({ result: "success", payload: result });
-});
+    try {
+        let uid  = req.params;
+        let deleteUser = await userModel.deleteOne({ id: uid.id });
+        res.send({ result: "success", payload: deleteUser });
+
+    } catch(error) {
+        console.log('ERROR ON DELETE USERS BY UID ', error  )}
+    
+})
 
 
-module.exports = router;
+module.exports = router 
