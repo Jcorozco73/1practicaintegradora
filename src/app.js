@@ -2,6 +2,7 @@ const express = require('express')
 const mongoose = require('mongoose')
 const userRouter = require('./routes/users.router')
 const userProduct = require('./routes/products.router')
+const cartRouter = require ('../src/routes/cart.router.js')
 const app = express()
 const PORT = 8080
 
@@ -22,6 +23,7 @@ mongoose.connect('mongodb+srv://jcmartinorozco:16080073@cluster0.hvxvolp.mongodb
 
 app.use('/api/users', userRouter)
 app.use('/api/products',userProduct )
+app.use('api/cart', cartRouter)
 
 
 
