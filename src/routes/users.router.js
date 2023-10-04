@@ -1,6 +1,7 @@
 const { Router } = require('express');
-
 const { userModel } = require('../models/user.model')
+const jwt = require('jsonwebtoken');
+const passport = require('passport');
 
 const router = Router();
 
@@ -39,6 +40,51 @@ router.post('/', async (req, res) => {
     }
     
 })
+
+// Login User
+router.post('/login', (req, res) => {
+  User.findOne({ email: req.body.email }).then(user => {
+    if (!user) {
+      return res.status(404).json({ email: 'User not found' });
+    }
+
+    // Check Password
+    user.comparePassword(req.body.password, (err, isMatch) => {
+      if (isMatch && !err) {
+        // User Matched
+        const payload = { id: user.id, name: user.name }; // Create JWT Payload
+
+        // Sign Token
+        jwt.sign(
+          payload,
+          'your_jwt_secret',
+          { expiresIn: 3600 },
+          (err, token) => {
+            res.json({
+              success: true,
+              token: 'Bearer ' + token
+            });
+          }
+        );
+      } else {
+        return res.status(400).json({ password: 'Password incorrect' });
+      }
+    });
+  });
+});
+
+router.get(
+    '/current',
+    passport.authenticate('jwt', { session: false }),
+    (req, res) => {
+      res.json({
+        id: req.user.id,
+        name: req.user.name,
+        email: req.user.email
+      });
+    }
+  );
+  
  
 
 
